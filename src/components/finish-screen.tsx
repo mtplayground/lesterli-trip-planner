@@ -10,6 +10,7 @@ import {
   type TripStyle,
 } from '@/engine'
 import { formatCurrency, formatHours } from '@/lib/format'
+import { TripStyleBadge } from '@/components/trip-style-badge'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -84,10 +85,8 @@ export function FinishScreen({
               </p>
               <div className="flex items-end gap-3">
                 <AnimatedScore key={score} score={score} />
-                <span className="mb-2 rounded-full bg-berry px-3 py-1 text-sm font-semibold text-white">
-                  {tripStyle}
-                </span>
               </div>
+              <TripStyleBadge tripStyle={tripStyle} />
               <div className="grid gap-3 pt-2">
                 <BreakdownRow label="Base score" value={baseScore} />
                 <BreakdownRow label="Bonuses" value={bonusTotal} positive />
