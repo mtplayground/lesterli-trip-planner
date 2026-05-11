@@ -9,7 +9,7 @@ import {
 } from '@/engine'
 import { formatCurrency, formatHours } from '@/lib/format'
 import { selectSelectedCity, useGameStore } from '@/store'
-import { AttractionGrid, ResourceHUD } from '@/components'
+import { AttractionGrid, ResourceHUD, YourDayPanel } from '@/components'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -30,6 +30,7 @@ export function PlayingPhase() {
   const selectedCity = useGameStore(selectSelectedCity)
   const itinerary = useGameStore((state) => state.itinerary)
   const addAttraction = useGameStore((state) => state.addAttraction)
+  const removeAttraction = useGameStore((state) => state.removeAttraction)
   const finishTrip = useGameStore((state) => state.finishTrip)
   const restart = useGameStore((state) => state.restart)
 
@@ -79,6 +80,12 @@ export function PlayingPhase() {
       </div>
 
       <div className="grid gap-6">
+        <YourDayPanel
+          itinerary={itinerary}
+          onRemoveAttraction={removeAttraction}
+          onFinishTrip={finishTrip}
+        />
+
         <Card className="border-white/60 bg-white/78 shadow-[0_24px_60px_rgba(15,23,42,0.08)] backdrop-blur">
           <CardHeader>
             <CardTitle className="font-display text-2xl text-slate-950">
@@ -102,23 +109,10 @@ export function PlayingPhase() {
           </CardContent>
         </Card>
 
-        <Card className="border-white/60 bg-white/78 shadow-[0_24px_60px_rgba(15,23,42,0.08)] backdrop-blur">
-          <CardHeader>
-            <CardTitle className="font-display text-2xl text-slate-950">
-              Phase actions
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-3">
-            <Button size="lg" onClick={finishTrip}>
-              <PartyPopper className="size-4" />
-              Finish trip
-            </Button>
-            <Button variant="outline" size="lg" onClick={restart}>
-              <RotateCcw className="size-4" />
-              Back to city select
-            </Button>
-          </CardContent>
-        </Card>
+        <Button variant="outline" size="lg" onClick={restart}>
+          <RotateCcw className="size-4" />
+          Back to city select
+        </Button>
       </div>
     </section>
   )
