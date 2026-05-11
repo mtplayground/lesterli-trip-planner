@@ -2,7 +2,6 @@ import { useMemo } from 'react'
 import { MapPinned, PartyPopper, RotateCcw } from 'lucide-react'
 
 import {
-  canAdd,
   classifyTripStyle,
   modifiersOf,
   scoreItinerary,
@@ -10,7 +9,7 @@ import {
 } from '@/engine'
 import { formatCurrency, formatHours } from '@/lib/format'
 import { selectSelectedCity, useGameStore } from '@/store'
-import { AttractionCard, ResourceHUD } from '@/components'
+import { AttractionGrid, ResourceHUD } from '@/components'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -71,37 +70,12 @@ export function PlayingPhase() {
           </CardContent>
         </Card>
 
-        <Card className="border-white/60 bg-white/78 shadow-[0_24px_60px_rgba(15,23,42,0.08)] backdrop-blur">
-          <CardHeader>
-            <CardTitle className="font-display text-2xl text-slate-950">
-              Quick picks
-            </CardTitle>
-            <CardDescription>
-              Lightweight controls to exercise the phase router before the real
-              game board lands.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-3">
-            {availableAttractions.slice(0, 4).map((attraction) => {
-              const isSelected = itinerary.some(
-                (plannedAttraction) => plannedAttraction.id === attraction.id
-              )
-              const canAddResult = isSelected
-                ? { ok: true, reason: null }
-                : canAdd(itinerary, attraction)
-
-              return (
-                <AttractionCard
-                  key={attraction.id}
-                  attraction={attraction}
-                  selected={isSelected}
-                  canAddResult={canAddResult}
-                  onAdd={addAttraction}
-                />
-              )
-            })}
-          </CardContent>
-        </Card>
+        <AttractionGrid
+          cityName={selectedCity.name}
+          attractions={availableAttractions}
+          itinerary={itinerary}
+          onAddAttraction={addAttraction}
+        />
       </div>
 
       <div className="grid gap-6">
