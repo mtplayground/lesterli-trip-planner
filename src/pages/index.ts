@@ -1,1 +1,5 @@
-export { WelcomePage } from './welcome-page'
+export {
+  CitySelectPhase,
+  FinishedPhase,
+  PlayingPhase,
+} from './app-phase-router'
