@@ -74,6 +74,11 @@ describe('FinishScreen', () => {
 
     expect(screen.getByText('Tokyo')).toBeInTheDocument()
     expect(screen.getByText('Balanced Explorer')).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        'You built a well-rounded route with smart variety across the whole city.'
+      )
+    ).toBeInTheDocument()
     expect(screen.getByText('Breakfast Market')).toBeInTheDocument()
     expect(screen.getByText('City Museum')).toBeInTheDocument()
     expect(screen.getByText('Base score')).toBeInTheDocument()
