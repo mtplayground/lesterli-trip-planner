@@ -44,9 +44,12 @@ describe('AttractionCard', () => {
   })
 
   it('shows the disabled reason when the attraction cannot be added', () => {
+    const onAdd = vi.fn()
+
     render(
       <AttractionCard
         attraction={sampleAttraction}
+        onAdd={onAdd}
         canAddResult={{
           ok: false,
           reason: 'Would exceed the 12-hour limit',
@@ -60,5 +63,9 @@ describe('AttractionCard', () => {
         /cannot add attraction: would exceed the 12-hour limit/i
       )
     ).toHaveAttribute('title', 'Would exceed the 12-hour limit')
+
+    fireEvent.click(screen.getByRole('button', { name: /unavailable/i }))
+
+    expect(onAdd).not.toHaveBeenCalled()
   })
 })

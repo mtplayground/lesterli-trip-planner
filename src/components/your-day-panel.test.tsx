@@ -84,4 +84,34 @@ describe('YourDayPanel', () => {
 
     expect(onFinishTrip).toHaveBeenCalledTimes(1)
   })
+
+  it('updates from empty to populated state and enables finishing after picks are added', () => {
+    const onFinishTrip = vi.fn()
+    const { rerender } = render(
+      <YourDayPanel
+        itinerary={[]}
+        onRemoveAttraction={vi.fn()}
+        onFinishTrip={onFinishTrip}
+      />
+    )
+
+    expect(screen.getByRole('button', { name: /finish trip/i })).toBeDisabled()
+    expect(screen.queryByText('Market Lunch')).not.toBeInTheDocument()
+
+    rerender(
+      <YourDayPanel
+        itinerary={sampleItinerary}
+        onRemoveAttraction={vi.fn()}
+        onFinishTrip={onFinishTrip}
+      />
+    )
+
+    expect(screen.getByText('Market Lunch')).toBeInTheDocument()
+    expect(screen.getByText('Museum Block')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /finish trip/i })).toBeEnabled()
+
+    fireEvent.click(screen.getByRole('button', { name: /finish trip/i }))
+
+    expect(onFinishTrip).toHaveBeenCalledTimes(1)
+  })
 })
