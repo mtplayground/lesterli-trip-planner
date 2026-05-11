@@ -1,7 +1,6 @@
 import { useMemo } from 'react'
-import { MapPinned, PartyPopper, PlaneTakeoff, RotateCcw } from 'lucide-react'
+import { MapPinned, PartyPopper, RotateCcw } from 'lucide-react'
 
-import { cities } from '@/data'
 import {
   classifyTripStyle,
   modifiersOf,
@@ -18,89 +17,12 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { CitySelectScreen } from './city-select-screen'
 
 export function CitySelectPhase() {
   const selectCity = useGameStore((state) => state.selectCity)
 
-  return (
-    <section className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-      <div className="space-y-6">
-        <div className="space-y-3">
-          <p className="text-sm font-semibold uppercase tracking-[0.28em] text-berry/75">
-            Phase 1 of 3
-          </p>
-          <h1 className="font-display text-4xl tracking-tight text-slate-950 sm:text-5xl">
-            Choose your city and start building a one-day adventure.
-          </h1>
-          <p className="max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
-            The app shell now routes between city selection, planning, and the
-            finish state. Later issues will replace these placeholders with the
-            full game board and result views.
-          </p>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-3">
-          {Object.values(cities).map((city) => (
-            <Card
-              key={city.id}
-              className="overflow-hidden border-white/60 bg-white/80 shadow-[0_24px_60px_rgba(15,23,42,0.08)] backdrop-blur"
-            >
-              <div
-                className="h-2 w-full"
-                style={{ backgroundColor: city.themeColor }}
-              />
-              <CardHeader className="gap-2">
-                <CardTitle className="font-display text-2xl text-slate-900">
-                  <h2>{city.name}</h2>
-                </CardTitle>
-                <CardDescription>
-                  {city.attractions.length} curated attractions are ready for
-                  the planning board.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="rounded-2xl bg-secondary/80 p-4 text-sm leading-6 text-secondary-foreground">
-                  Theme color, city dataset, and store selection are wired into
-                  the shell now.
-                </div>
-                <Button
-                  className="w-full"
-                  size="lg"
-                  onClick={() => selectCity(city.id)}
-                >
-                  <PlaneTakeoff className="size-4" />
-                  Start in {city.name}
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
-
-      <Card className="border-white/60 bg-white/72 shadow-[0_24px_60px_rgba(15,23,42,0.08)] backdrop-blur">
-        <CardHeader className="gap-3">
-          <CardTitle className="font-display text-2xl text-slate-950">
-            Phase router status
-          </CardTitle>
-          <CardDescription>
-            This top-level shell already owns theme, transitions, and view
-            switching.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="grid gap-4 text-sm leading-6 text-slate-600">
-          <div className="rounded-2xl border border-border/70 bg-white/75 p-4">
-            `city-select` shows city choices and initializes the game state.
-          </div>
-          <div className="rounded-2xl border border-border/70 bg-white/75 p-4">
-            `playing` will host the main board, itinerary, HUD, and modifiers.
-          </div>
-          <div className="rounded-2xl border border-border/70 bg-white/75 p-4">
-            `finished` will reveal the final score, style, and restart flow.
-          </div>
-        </CardContent>
-      </Card>
-    </section>
-  )
+  return <CitySelectScreen onSelectCity={selectCity} />
 }
 
 export function PlayingPhase() {
