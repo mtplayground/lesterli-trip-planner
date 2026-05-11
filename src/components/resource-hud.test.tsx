@@ -46,4 +46,39 @@ describe('ResourceHUD', () => {
     expect(within(costSection).getByText('Limit reached')).toBeInTheDocument()
     expect(within(energySection).getByText('Healthy')).toBeInTheDocument()
   })
+
+  it('updates totals and progress semantics when resource usage changes', () => {
+    const { rerender } = render(
+      <ResourceHUD
+        totals={{
+          timeHours: 3,
+          costUsd: 24,
+          energy: 16,
+        }}
+      />
+    )
+
+    expect(
+      screen.getByRole('progressbar', { name: /cost usage/i })
+    ).toHaveAttribute('aria-valuetext', '$24 of $150. Healthy.')
+
+    rerender(
+      <ResourceHUD
+        totals={{
+          timeHours: 12,
+          costUsd: 123,
+          energy: 86,
+        }}
+      />
+    )
+
+    expect(screen.getByText('12 hours')).toBeInTheDocument()
+    expect(screen.getByText('$123')).toBeInTheDocument()
+    expect(screen.getByText('86 energy points')).toBeInTheDocument()
+    expect(screen.getAllByText('Limit reached')).toHaveLength(1)
+    expect(screen.getAllByText('Warning')).toHaveLength(2)
+    expect(
+      screen.getByRole('progressbar', { name: /time usage/i })
+    ).toHaveAttribute('aria-valuetext', '12 hours of 12 hours. Limit reached.')
+  })
 })
