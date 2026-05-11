@@ -10,7 +10,7 @@ test('opens the app shell', async ({ page }) => {
     })
   ).toBeVisible()
 
-  await page.getByRole('button', { name: /start in tokyo/i }).click()
+  await page.getByRole('button', { name: /choose tokyo/i }).click()
 
   await expect(
     page.getByRole('heading', {
