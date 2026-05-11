@@ -1,4 +1,3 @@
-import './App.css'
 import { WelcomePage } from '@/pages'
 
 function App() {
