@@ -9,7 +9,12 @@ import {
 } from '@/engine'
 import { formatCurrency, formatHours } from '@/lib/format'
 import { selectSelectedCity, useGameStore } from '@/store'
-import { AttractionGrid, ResourceHUD, YourDayPanel } from '@/components'
+import {
+  AttractionGrid,
+  ModifiersPanel,
+  ResourceHUD,
+  YourDayPanel,
+} from '@/components'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -86,6 +91,8 @@ export function PlayingPhase() {
           onFinishTrip={finishTrip}
         />
 
+        <ModifiersPanel modifiers={modifiers} />
+
         <Card className="border-white/60 bg-white/78 shadow-[0_24px_60px_rgba(15,23,42,0.08)] backdrop-blur">
           <CardHeader>
             <CardTitle className="font-display text-2xl text-slate-950">
@@ -99,9 +106,6 @@ export function PlayingPhase() {
           <CardContent className="space-y-3 text-sm text-slate-600">
             <div className="rounded-2xl bg-secondary/80 p-4">
               Selected attractions: {itinerary.length}
-            </div>
-            <div className="rounded-2xl bg-secondary/80 p-4">
-              Active modifiers: {modifiers.length}
             </div>
             <div className="rounded-2xl bg-secondary/80 p-4">
               Projected score: {score}
