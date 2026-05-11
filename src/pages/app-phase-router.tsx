@@ -11,6 +11,7 @@ import { selectSelectedCity, useGameStore } from '@/store'
 import {
   AttractionGrid,
   FinishScreen,
+  MobileItineraryDrawer,
   ModifiersPanel,
   ResourceHUD,
   YourDayPanel,
@@ -50,7 +51,7 @@ export function PlayingPhase() {
   const availableAttractions = selectedCity.attractions
 
   return (
-    <section className="grid gap-6 xl:grid-cols-[1.08fr_0.92fr]">
+    <section className="grid gap-6 pb-24 md:pb-0 xl:grid-cols-[1.08fr_0.92fr]">
       <div className="space-y-6">
         <Card className="overflow-hidden border-white/60 bg-white/78 shadow-[0_24px_60px_rgba(15,23,42,0.08)] backdrop-blur">
           <div
@@ -82,10 +83,17 @@ export function PlayingPhase() {
           itinerary={itinerary}
           onAddAttraction={addAttraction}
         />
+
+        <MobileItineraryDrawer
+          itinerary={itinerary}
+          onRemoveAttraction={removeAttraction}
+          onFinishTrip={finishTrip}
+        />
       </div>
 
       <div className="grid gap-6">
         <YourDayPanel
+          className="hidden md:block border-white/60 bg-white/78 shadow-[0_24px_60px_rgba(15,23,42,0.08)] backdrop-blur"
           itinerary={itinerary}
           onRemoveAttraction={removeAttraction}
           onFinishTrip={finishTrip}
