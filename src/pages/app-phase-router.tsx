@@ -7,8 +7,9 @@ import {
   scoreItinerary,
   totalsOf,
 } from '@/engine'
-import { formatCurrency, formatEnergy, formatHours } from '@/lib/format'
+import { formatCurrency, formatHours } from '@/lib/format'
 import { selectSelectedCity, useGameStore } from '@/store'
+import { ResourceHUD } from '@/components'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -64,10 +65,8 @@ export function PlayingPhase() {
               route contract intact.
             </CardDescription>
           </CardHeader>
-          <CardContent className="grid gap-4 md:grid-cols-3">
-            <StatCard label="Time" value={formatHours(totals.timeHours)} />
-            <StatCard label="Budget" value={formatCurrency(totals.costUsd)} />
-            <StatCard label="Energy" value={formatEnergy(totals.energy)} />
+          <CardContent>
+            <ResourceHUD totals={totals} />
           </CardContent>
         </Card>
 
