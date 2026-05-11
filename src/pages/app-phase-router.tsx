@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { MapPinned, PartyPopper, RotateCcw } from 'lucide-react'
 
 import {
+  canAdd,
   classifyTripStyle,
   modifiersOf,
   scoreItinerary,
@@ -9,7 +10,7 @@ import {
 } from '@/engine'
 import { formatCurrency, formatHours } from '@/lib/format'
 import { selectSelectedCity, useGameStore } from '@/store'
-import { ResourceHUD } from '@/components'
+import { AttractionCard, ResourceHUD } from '@/components'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -85,30 +86,18 @@ export function PlayingPhase() {
               const isSelected = itinerary.some(
                 (plannedAttraction) => plannedAttraction.id === attraction.id
               )
+              const canAddResult = isSelected
+                ? { ok: true, reason: null }
+                : canAdd(itinerary, attraction)
 
               return (
-                <div
+                <AttractionCard
                   key={attraction.id}
-                  className="flex flex-col gap-3 rounded-3xl border border-border/70 bg-white/80 p-4 sm:flex-row sm:items-center sm:justify-between"
-                >
-                  <div className="space-y-1">
-                    <p className="font-medium text-slate-900">
-                      {attraction.name}
-                    </p>
-                    <p className="text-sm text-slate-500">
-                      {attraction.category} •{' '}
-                      {formatHours(attraction.timeHours)} •{' '}
-                      {formatCurrency(attraction.costUsd)}
-                    </p>
-                  </div>
-                  <Button
-                    variant={isSelected ? 'secondary' : 'default'}
-                    disabled={isSelected}
-                    onClick={() => addAttraction(attraction)}
-                  >
-                    {isSelected ? 'Added' : 'Add to route'}
-                  </Button>
-                </div>
+                  attraction={attraction}
+                  selected={isSelected}
+                  canAddResult={canAddResult}
+                  onAdd={addAttraction}
+                />
               )
             })}
           </CardContent>
