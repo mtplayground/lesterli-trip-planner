@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion'
 import { StructureCard } from '@/components'
 import { Button } from '@/components/ui/button'
 import {
@@ -18,6 +19,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { Progress } from '@/components/ui/progress'
+import { formatCurrency, formatEnergy, formatHours } from '@/lib/format'
 import { Sparkles, SwatchBook, Wand2 } from 'lucide-react'
 
 const structureSections = [
@@ -47,7 +49,12 @@ export function WelcomePage() {
   return (
     <main className="min-h-screen bg-aurora px-4 py-6 text-foreground sm:px-6 lg:px-8">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
-        <section className="overflow-hidden rounded-card border border-white/60 bg-[linear-gradient(135deg,rgba(124,58,237,0.96),rgba(15,118,110,0.92))] text-white shadow-float">
+        <motion.section
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, ease: 'easeOut' }}
+          className="overflow-hidden rounded-card border border-white/60 bg-[linear-gradient(135deg,rgba(124,58,237,0.96),rgba(15,118,110,0.92))] text-white shadow-float"
+        >
           <div className="grid gap-8 px-6 py-8 sm:px-8 lg:grid-cols-[1.2fr_0.8fr] lg:px-10">
             <div className="space-y-5">
               <p className="text-sm font-semibold uppercase tracking-[0.28em] text-white/80">
@@ -156,9 +163,12 @@ export function WelcomePage() {
               </CardContent>
             </Card>
           </div>
-        </section>
+        </motion.section>
 
-        <section
+        <motion.section
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.08, ease: 'easeOut' }}
           className="grid gap-4 md:grid-cols-2 xl:grid-cols-5"
           aria-label="Project structure"
         >
@@ -169,9 +179,14 @@ export function WelcomePage() {
               description={section.description}
             />
           ))}
-        </section>
+        </motion.section>
 
-        <Card className="border-peach/80 bg-white/88 shadow-[0_20px_55px_rgba(15,23,42,0.08)]">
+        <motion.div
+          initial={{ opacity: 0, y: 28 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, delay: 0.14, ease: 'easeOut' }}
+        >
+          <Card className="border-peach/80 bg-white/88 shadow-[0_20px_55px_rgba(15,23,42,0.08)]">
           <CardHeader className="gap-2">
             <CardTitle className="font-display text-2xl text-slate-900">
               Starter notes
@@ -191,19 +206,22 @@ export function WelcomePage() {
               <code className="ml-1">0.0.0.0:8080</code>.
             </div>
             <div className="rounded-2xl bg-secondary p-4 text-sm leading-6 text-secondary-foreground">
-              Theme variables live in CSS while extended utility tokens are
-              defined in <code className="ml-1">tailwind.config.ts</code>.
+              Shared format helpers now output values like
+              <span className="ml-1 font-medium">
+                {formatCurrency(150)}, {formatHours(2.5)}, and {formatEnergy(72)}.
+              </span>
             </div>
           </CardContent>
           <CardFooter className="justify-between gap-3 border-t border-peach/80 bg-peach/40">
             <p className="text-sm text-slate-600">
-              Ready for data, engine, and game-board work.
+              Ready for data, engine, store, and motion-driven UI work.
             </p>
             <Button variant="outline" className="border-slate-300 bg-white/70">
               Continue building
             </Button>
           </CardFooter>
         </Card>
+        </motion.div>
       </div>
     </main>
   )
