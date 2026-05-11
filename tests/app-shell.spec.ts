@@ -6,7 +6,15 @@ test('opens the app shell', async ({ page }) => {
   await expect(page).toHaveTitle(/trip planner/i)
   await expect(
     page.getByRole('heading', {
-      name: /tailwind and shadcn are wired into the trip planner starter/i,
+      name: /choose your city and start building a one-day adventure/i,
+    })
+  ).toBeVisible()
+
+  await page.getByRole('button', { name: /start in tokyo/i }).click()
+
+  await expect(
+    page.getByRole('heading', {
+      name: /planning in tokyo/i,
     })
   ).toBeVisible()
 })
