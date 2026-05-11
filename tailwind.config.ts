@@ -13,7 +13,13 @@ const config = {
         sunrise: '#f59e0b',
       },
       fontFamily: {
-        sans: ['"Geist Variable"', '"Segoe UI"', '"Helvetica Neue"', 'Arial', 'sans-serif'],
+        sans: [
+          '"Geist Variable"',
+          '"Segoe UI"',
+          '"Helvetica Neue"',
+          'Arial',
+          'sans-serif',
+        ],
         display: ['"Space Grotesk"', '"Geist Variable"', 'sans-serif'],
       },
       borderRadius: {
