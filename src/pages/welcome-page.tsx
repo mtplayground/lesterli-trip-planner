@@ -150,14 +150,16 @@ export function WelcomePage() {
                       <SwatchBook className="size-4" />
                       Playful tokens
                     </div>
-                    Berry, lagoon, sunrise, custom radii, and display font are exposed to Tailwind.
+                    Berry, lagoon, sunrise, custom radii, and display font are
+                    exposed to Tailwind.
                   </div>
                   <div className="rounded-2xl border border-white/12 bg-white/10 p-4">
                     <div className="mb-2 flex items-center gap-2 font-medium">
                       <Sparkles className="size-4" />
                       Reusable base
                     </div>
-                    shadcn components inherit semantic background, card, accent, and ring tokens.
+                    shadcn components inherit semantic background, card, accent,
+                    and ring tokens.
                   </div>
                 </div>
               </CardContent>
@@ -187,40 +189,44 @@ export function WelcomePage() {
           transition={{ duration: 0.45, delay: 0.14, ease: 'easeOut' }}
         >
           <Card className="border-peach/80 bg-white/88 shadow-[0_20px_55px_rgba(15,23,42,0.08)]">
-          <CardHeader className="gap-2">
-            <CardTitle className="font-display text-2xl text-slate-900">
-              Starter notes
-            </CardTitle>
-            <CardDescription>
-              The repo now has the baseline styling system expected by future
-              feature issues.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-4 md:grid-cols-3">
-            <div className="rounded-2xl bg-secondary p-4 text-sm leading-6 text-secondary-foreground">
-              TypeScript path aliases resolve <code>@/*</code> to
-              <code className="ml-1">src/*</code>.
-            </div>
-            <div className="rounded-2xl bg-secondary p-4 text-sm leading-6 text-secondary-foreground">
-              Vite dev and preview remain configured for
-              <code className="ml-1">0.0.0.0:8080</code>.
-            </div>
-            <div className="rounded-2xl bg-secondary p-4 text-sm leading-6 text-secondary-foreground">
-              Shared format helpers now output values like
-              <span className="ml-1 font-medium">
-                {formatCurrency(150)}, {formatHours(2.5)}, and {formatEnergy(72)}.
-              </span>
-            </div>
-          </CardContent>
-          <CardFooter className="justify-between gap-3 border-t border-peach/80 bg-peach/40">
-            <p className="text-sm text-slate-600">
-              Ready for data, engine, store, and motion-driven UI work.
-            </p>
-            <Button variant="outline" className="border-slate-300 bg-white/70">
-              Continue building
-            </Button>
-          </CardFooter>
-        </Card>
+            <CardHeader className="gap-2">
+              <CardTitle className="font-display text-2xl text-slate-900">
+                Starter notes
+              </CardTitle>
+              <CardDescription>
+                The repo now has the baseline styling system expected by future
+                feature issues.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-4 md:grid-cols-3">
+              <div className="rounded-2xl bg-secondary p-4 text-sm leading-6 text-secondary-foreground">
+                TypeScript path aliases resolve <code>@/*</code> to
+                <code className="ml-1">src/*</code>.
+              </div>
+              <div className="rounded-2xl bg-secondary p-4 text-sm leading-6 text-secondary-foreground">
+                Vite dev and preview remain configured for
+                <code className="ml-1">0.0.0.0:8080</code>.
+              </div>
+              <div className="rounded-2xl bg-secondary p-4 text-sm leading-6 text-secondary-foreground">
+                Shared format helpers now output values like
+                <span className="ml-1 font-medium">
+                  {formatCurrency(150)}, {formatHours(2.5)}, and{' '}
+                  {formatEnergy(72)}.
+                </span>
+              </div>
+            </CardContent>
+            <CardFooter className="justify-between gap-3 border-t border-peach/80 bg-peach/40">
+              <p className="text-sm text-slate-600">
+                Ready for data, engine, store, and motion-driven UI work.
+              </p>
+              <Button
+                variant="outline"
+                className="border-slate-300 bg-white/70"
+              >
+                Continue building
+              </Button>
+            </CardFooter>
+          </Card>
         </motion.div>
       </div>
     </main>
