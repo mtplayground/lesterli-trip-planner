@@ -9,6 +9,9 @@ describe('ModifiersPanel', () => {
   it('renders the empty state when there are no active modifiers', () => {
     render(<ModifiersPanel modifiers={[]} />)
 
+    expect(
+      screen.getByRole('region', { name: /active modifiers/i })
+    ).toBeInTheDocument()
     expect(screen.getByText(/no live modifiers/i)).toBeInTheDocument()
     expect(
       screen.getByText(/mix categories or lean into a theme/i)
@@ -37,10 +40,14 @@ describe('ModifiersPanel', () => {
 
     render(<ModifiersPanel modifiers={modifiers} />)
 
+    expect(screen.getByRole('list')).toBeInTheDocument()
     expect(screen.getByText('Balanced Mix')).toBeInTheDocument()
     expect(screen.getByText('All-Nighter')).toBeInTheDocument()
     expect(screen.getByText('+12')).toBeInTheDocument()
     expect(screen.getByText('-10')).toBeInTheDocument()
+    expect(
+      screen.getByLabelText(/balanced mix, bonus \+12/i)
+    ).toBeInTheDocument()
     expect(
       screen.getByText(
         /pick attractions from at least four different categories/i

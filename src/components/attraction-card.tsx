@@ -82,7 +82,7 @@ export function AttractionCard({
   return (
     <Card
       className={cn(
-        'h-full border-white/70 bg-white/85 shadow-[0_24px_60px_rgba(15,23,42,0.08)] backdrop-blur transition-all',
+        'h-full border-white/70 bg-white/85 shadow-[0_24px_60px_rgba(15,23,42,0.08)] backdrop-blur transition-all focus-within:ring-2 focus-within:ring-primary/35 focus-within:ring-offset-2 focus-within:ring-offset-white/70 motion-reduce:transition-none',
         selected &&
           'border-lagoon/60 bg-lagoon/8 shadow-[0_28px_70px_rgba(15,118,110,0.14)] ring-1 ring-lagoon/30'
       )}

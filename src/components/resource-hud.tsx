@@ -95,6 +95,8 @@ export function ResourceHUD({ totals, className }: ResourceHUDProps) {
               </div>
               <Progress
                 value={progressValue}
+                aria-label={`${resource.label} usage`}
+                aria-valuetext={`${resource.formatValue(value)} of ${resource.limitLabel}. ${statusLabel(level)}.`}
                 className={trackClassName(level)}
                 indicatorClassName={indicatorClassName(level)}
               />

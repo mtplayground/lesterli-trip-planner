@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import {
   Compass,
   Landmark,
@@ -69,6 +69,8 @@ interface CitySelectScreenProps {
 }
 
 export function CitySelectScreen({ onSelectCity }: CitySelectScreenProps) {
+  const prefersReducedMotion = useReducedMotion() ?? false
+
   return (
     <section className="grid gap-8 lg:grid-cols-[1.02fr_0.98fr]">
       <div className="space-y-6">
@@ -95,15 +97,23 @@ export function CitySelectScreen({ onSelectCity }: CitySelectScreenProps) {
               <motion.button
                 key={city.id}
                 type="button"
-                whileHover={{ y: -8, scale: 1.012 }}
-                whileTap={{ scale: 0.985, y: -2 }}
-                transition={{ type: 'spring', stiffness: 320, damping: 24 }}
+                whileHover={
+                  prefersReducedMotion ? undefined : { y: -8, scale: 1.012 }
+                }
+                whileTap={
+                  prefersReducedMotion ? undefined : { scale: 0.985, y: -2 }
+                }
+                transition={
+                  prefersReducedMotion
+                    ? { duration: 0 }
+                    : { type: 'spring', stiffness: 320, damping: 24 }
+                }
                 onClick={() => onSelectCity(city.id)}
-                className="group text-left"
+                className="group rounded-[2rem] text-left focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/20 focus-visible:ring-offset-4 focus-visible:ring-offset-transparent"
                 aria-label={`Choose ${city.name}`}
               >
                 <Card
-                  className="h-full border-white/65 bg-white/78 shadow-[0_26px_64px_rgba(15,23,42,0.09)] backdrop-blur transition-shadow duration-200 group-hover:shadow-[0_34px_84px_rgba(15,23,42,0.14)]"
+                  className="h-full border-white/65 bg-white/78 shadow-[0_26px_64px_rgba(15,23,42,0.09)] backdrop-blur transition-shadow duration-200 group-hover:shadow-[0_34px_84px_rgba(15,23,42,0.14)] group-focus-visible:ring-2 group-focus-visible:ring-primary/45 group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-white/70 motion-reduce:transition-none"
                   style={{
                     backgroundImage: [
                       `radial-gradient(circle at 80% 18%, ${story.accentGlow}, transparent 30%)`,

@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { useEffect } from 'react'
 
 import { CitySelectPhase, FinishedPhase, PlayingPhase } from '@/pages'
@@ -11,6 +11,7 @@ const fallbackThemeColor = '#7c3aed'
 function App() {
   const phase = useGameStore((state) => state.phase)
   const selectedCity = useGameStore(selectSelectedCity)
+  const prefersReducedMotion = useReducedMotion() ?? false
 
   useEffect(() => {
     document.title = appTitle
@@ -20,7 +21,7 @@ function App() {
 
   return (
     <main
-      className="min-h-screen px-4 py-6 text-foreground transition-[background] duration-500 sm:px-6 lg:px-8"
+      className="min-h-screen px-4 py-6 text-foreground transition-[background] duration-500 motion-reduce:transition-none sm:px-6 lg:px-8"
       style={{
         backgroundImage: buildShellBackground(themeColor),
       }}
@@ -43,10 +44,22 @@ function App() {
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={phase}
-            initial={{ opacity: 0, y: 24, scale: 0.985 }}
+            initial={
+              prefersReducedMotion
+                ? { opacity: 1 }
+                : { opacity: 0, y: 24, scale: 0.985 }
+            }
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -18, scale: 0.985 }}
-            transition={{ duration: 0.28, ease: 'easeOut' }}
+            exit={
+              prefersReducedMotion
+                ? { opacity: 1 }
+                : { opacity: 0, y: -18, scale: 0.985 }
+            }
+            transition={
+              prefersReducedMotion
+                ? { duration: 0 }
+                : { duration: 0.28, ease: 'easeOut' }
+            }
             className="flex-1"
           >
             {phase === 'city-select' && <CitySelectPhase />}

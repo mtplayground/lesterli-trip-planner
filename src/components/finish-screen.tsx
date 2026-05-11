@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { PartyPopper, RotateCcw, Sparkles } from 'lucide-react'
 
 import {
@@ -37,6 +37,7 @@ export function FinishScreen({
   tripStyle,
   onPlayAgain,
 }: FinishScreenProps) {
+  const prefersReducedMotion = useReducedMotion() ?? false
   const baseScore = useMemo(() => baseScoreOf(itinerary), [itinerary])
   const bonusTotal = useMemo(
     () =>
@@ -59,9 +60,13 @@ export function FinishScreen({
   return (
     <section className="grid gap-6 lg:grid-cols-[1.12fr_0.88fr]">
       <motion.div
-        initial={{ opacity: 0, y: 22 }}
+        initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 22 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.28, ease: 'easeOut' }}
+        transition={
+          prefersReducedMotion
+            ? { duration: 0 }
+            : { duration: 0.28, ease: 'easeOut' }
+        }
       >
         <Card className="overflow-hidden border-white/60 bg-white/82 shadow-[0_28px_72px_rgba(15,23,42,0.1)] backdrop-blur">
           <CardHeader className="gap-4 border-b border-white/70 bg-[linear-gradient(135deg,rgba(124,58,237,0.12),rgba(15,118,110,0.08))] pb-6">
@@ -84,7 +89,11 @@ export function FinishScreen({
                 Score reveal
               </p>
               <div className="flex items-end gap-3">
-                <AnimatedScore key={score} score={score} />
+                <AnimatedScore
+                  key={`${score}-${prefersReducedMotion ? 'reduced' : 'full'}`}
+                  score={score}
+                  reducedMotion={prefersReducedMotion}
+                />
               </div>
               <TripStyleBadge tripStyle={tripStyle} />
               <div className="grid gap-3 pt-2">
@@ -175,9 +184,13 @@ export function FinishScreen({
       </motion.div>
 
       <motion.div
-        initial={{ opacity: 0, y: 26 }}
+        initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 26 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.32, delay: 0.06, ease: 'easeOut' }}
+        transition={
+          prefersReducedMotion
+            ? { duration: 0 }
+            : { duration: 0.32, delay: 0.06, ease: 'easeOut' }
+        }
         className="grid gap-6 content-start"
       >
         <Card className="border-white/60 bg-white/78 shadow-[0_24px_60px_rgba(15,23,42,0.08)] backdrop-blur">
@@ -204,11 +217,17 @@ export function FinishScreen({
   )
 }
 
-function AnimatedScore({ score }: { score: number }) {
+function AnimatedScore({
+  score,
+  reducedMotion,
+}: {
+  score: number
+  reducedMotion: boolean
+}) {
   const [revealedScore, setRevealedScore] = useState(0)
 
   useEffect(() => {
-    if (score === 0) {
+    if (reducedMotion || score === 0) {
       return
     }
 
@@ -228,11 +247,17 @@ function AnimatedScore({ score }: { score: number }) {
     }, stepMs)
 
     return () => window.clearInterval(timer)
-  }, [score])
+  }, [reducedMotion, score])
+
+  const displayedScore = reducedMotion ? score : revealedScore
 
   return (
-    <span className="font-display text-7xl leading-none tracking-tight text-slate-950">
-      {revealedScore}
+    <span
+      className="font-display text-7xl leading-none tracking-tight text-slate-950"
+      aria-live="polite"
+      aria-label={`Final score ${displayedScore}`}
+    >
+      {displayedScore}
     </span>
   )
 }

@@ -22,6 +22,9 @@ describe('ResourceHUD', () => {
     expect(screen.getByText('Limit 12 hours')).toBeInTheDocument()
     expect(screen.getByText('Limit $150')).toBeInTheDocument()
     expect(screen.getByText('Limit 100 energy points')).toBeInTheDocument()
+    expect(
+      screen.getByRole('progressbar', { name: /time usage/i })
+    ).toHaveAttribute('aria-valuetext', '4.5 hours of 12 hours. Healthy.')
   })
 
   it('shows warning and danger states at the configured thresholds', () => {

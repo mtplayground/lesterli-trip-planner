@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { ArrowDownRight, ArrowUpRight, Blend, Sparkles } from 'lucide-react'
 
 import type { Modifier } from '@/engine'
@@ -17,6 +17,8 @@ interface ModifiersPanelProps {
 }
 
 export function ModifiersPanel({ modifiers, className }: ModifiersPanelProps) {
+  const prefersReducedMotion = useReducedMotion() ?? false
+
   return (
     <Card
       className={cn(
@@ -37,15 +39,29 @@ export function ModifiersPanel({ modifiers, className }: ModifiersPanelProps) {
         </CardDescription>
       </CardHeader>
 
-      <CardContent>
+      <CardContent
+        role="region"
+        aria-label="Active modifiers"
+        aria-live="polite"
+        aria-relevant="additions removals"
+      >
         <AnimatePresence mode="popLayout" initial={false}>
           {modifiers.length === 0 ? (
             <motion.div
               key="empty"
-              initial={{ opacity: 0, y: 10 }}
+              role="status"
+              initial={
+                prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 10 }
+              }
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.18, ease: 'easeOut' }}
+              exit={
+                prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: -8 }
+              }
+              transition={
+                prefersReducedMotion
+                  ? { duration: 0 }
+                  : { duration: 0.18, ease: 'easeOut' }
+              }
               className="rounded-3xl border border-dashed border-slate-300/80 bg-slate-50/70 px-5 py-8 text-center"
             >
               <div className="mx-auto flex size-12 items-center justify-center rounded-2xl bg-white text-berry shadow-[0_12px_30px_rgba(124,58,237,0.14)]">
@@ -60,15 +76,33 @@ export function ModifiersPanel({ modifiers, className }: ModifiersPanelProps) {
               </p>
             </motion.div>
           ) : (
-            <motion.div layout className="space-y-3">
+            <motion.div
+              layout={!prefersReducedMotion}
+              className="space-y-3"
+              role="list"
+            >
               {modifiers.map((modifier) => (
                 <motion.div
                   key={modifier.id}
-                  layout
-                  initial={{ opacity: 0, y: 12, scale: 0.98 }}
+                  role="listitem"
+                  aria-label={`${modifier.label}, ${modifier.kind} ${modifier.delta > 0 ? '+' : ''}${modifier.delta}`}
+                  layout={!prefersReducedMotion}
+                  initial={
+                    prefersReducedMotion
+                      ? { opacity: 1, scale: 1 }
+                      : { opacity: 0, y: 12, scale: 0.98 }
+                  }
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -10, scale: 0.98 }}
-                  transition={{ duration: 0.2, ease: 'easeOut' }}
+                  exit={
+                    prefersReducedMotion
+                      ? { opacity: 1, scale: 1 }
+                      : { opacity: 0, y: -10, scale: 0.98 }
+                  }
+                  transition={
+                    prefersReducedMotion
+                      ? { duration: 0 }
+                      : { duration: 0.2, ease: 'easeOut' }
+                  }
                   className={cn(
                     'rounded-3xl border p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.72)]',
                     modifier.kind === 'bonus'
