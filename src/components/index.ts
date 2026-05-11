@@ -1,6 +1,7 @@
 export { AttractionCard } from './attraction-card'
 export { AttractionGrid } from './attraction-grid'
 export { FinishScreen } from './finish-screen'
+export { MobileItineraryDrawer } from './mobile-itinerary-drawer'
 export { ModifiersPanel } from './modifiers-panel'
 export { ResourceHUD } from './resource-hud'
 export { StructureCard } from './structure-card'
