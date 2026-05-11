@@ -1,5 +1,6 @@
 export { AttractionCard } from './attraction-card'
 export { AttractionGrid } from './attraction-grid'
+export { ModifiersPanel } from './modifiers-panel'
 export { ResourceHUD } from './resource-hud'
 export { StructureCard } from './structure-card'
 export { YourDayPanel } from './your-day-panel'
