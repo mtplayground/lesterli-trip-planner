@@ -62,6 +62,40 @@ For a local sanity check of the built bundle:
 npm run preview -- --host 0.0.0.0 --port 8080
 ```
 
+## PWA & Mobile Install
+
+Trip Planner is configured as an installable Progressive Web App. To verify the
+production PWA output locally:
+
+```bash
+npm run build
+npm run preview -- --host 0.0.0.0 --port 8080
+```
+
+Then open `http://localhost:8080` in Chrome and check DevTools:
+
+1. **Application > Manifest** shows the `Trip Planner` manifest, standalone
+   display mode, theme color `#863bff`, and 192/512/maskable icon entries.
+2. **Application > Service Workers** shows the generated service worker
+   registered for the page after reload.
+3. **Lighthouse > Progressive Web App** completes without missing manifest,
+   icon, or service-worker registration warnings.
+
+### Install from desktop Chrome
+
+1. Build and serve the production bundle with `npm run preview`.
+2. Open `http://localhost:8080` in Chrome.
+3. Select the install icon in the address bar, or choose
+   **Customize and control Chrome > Save and share > Install Trip Planner**.
+4. Launch Trip Planner from the installed app shortcut.
+
+### Add to Home Screen on iOS
+
+1. Open the deployed Trip Planner URL in Safari on iPhone or iPad.
+2. Tap the **Share** button.
+3. Choose **Add to Home Screen**.
+4. Confirm the name `Trip Planner`, then tap **Add**.
+
 ## Static Deployment
 
 This app is a client-side SPA. After `npm run build`, deploy the contents of
