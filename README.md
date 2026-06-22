@@ -34,6 +34,22 @@ npm run dev -- --host 0.0.0.0 --port 8080
 npm run build
 ```
 
+## PWA icon assets
+
+The PWA manifest and Apple touch icon use PNG assets generated from the
+checked-in `public/favicon.svg`.
+
+Regenerate them with ImageMagick:
+
+```bash
+magick -background none -density 1024 public/favicon.svg -resize 192x192 -gravity center -extent 192x192 -depth 8 public/pwa-192x192.png
+magick -background none -density 1024 public/favicon.svg -resize 512x512 -gravity center -extent 512x512 -depth 8 public/pwa-512x512.png
+magick -size 512x512 xc:'#08060d' \( -background none -density 1024 public/favicon.svg -resize 384x384 \) -gravity center -compose over -composite -depth 8 public/pwa-512x512-maskable.png
+```
+
+The maskable icon intentionally renders the favicon at 384px on a 512px
+background to preserve safe-area padding for Android adaptive icon masks.
+
 The production build currently emits a static bundle under `dist/` with:
 
 - `dist/index.html`
