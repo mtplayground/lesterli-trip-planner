@@ -1,118 +1,95 @@
-Trip Planner architecture plan
-==============================
+Trip Planner PWA architecture plan
+==================================
 
 Goal
-Build a Vite + React + TypeScript single-page game where the user picks a city, assembles a day itinerary under fixed resource limits, sees live combo/penalty feedback, and finishes on an animated score/results screen.
+----
+Add Progressive Web App support to the existing Vite + React + TypeScript Trip Planner SPA so it can be installed from mobile and desktop browsers, has a Web App Manifest, registers a service worker with automatic updates, and documents install/verification steps.
 
-Module structure
-----------------
-Use the issue-prescribed top-level folders and keep business logic out of components:
+Current project shape
+---------------------
+- Vite React SPA entry: `index.html` -> `src/main.tsx` -> `src/App.tsx`.
+- Static public assets live in `public/` (`favicon.svg`, `icons.svg`).
+- Vite configuration is centralized in `vite.config.ts` with React and Tailwind plugins.
+- Build/test scripts are npm-based: `npm run build`, `npm run preview`, `npm run test`, `npm run lint`.
 
-- `src/app/`
-  - `App.tsx`: phase router and app theme shell
-  - `providers.tsx`: optional test/app providers if needed later
-- `src/components/`
-  - `city/CityCard.tsx`
-  - `hud/ResourceHUD.tsx`
-  - `attractions/AttractionCard.tsx`
-  - `attractions/AttractionGrid.tsx`
-  - `itinerary/YourDayPanel.tsx`
-  - `modifiers/ModifiersPanel.tsx`
-  - `results/FinishScreen.tsx`
-  - `results/TripStyleBadge.tsx`
-  - `ui/`: shadcn primitives
-- `src/data/`
-  - `cities/tokyo.ts`
-  - `cities/paris.ts`
-  - `cities/new-york.ts`
-  - `registry.ts`
-- `src/engine/`
-  - `types.ts`: domain types and constants
-  - `resources.ts`: totals, limit checks, warning thresholds
-  - `modifiers.ts`: combo/penalty rules
-  - `scoring.ts`: base score, modifier application, trip-style classification
-  - `selectors.ts`: pure derived helpers shared by store/tests
-- `src/lib/`
-  - `cn.ts`
-  - `format.ts`
-  - `icons.ts` or `theme.ts` if city/category display metadata grows
-- `src/pages/`
-  - `CitySelectPage.tsx`
-  - `GameBoardPage.tsx`
-  - `FinishPage.tsx`
-- `src/store/`
-  - `game-store.ts`: Zustand state/actions/selectors
-- `src/test/`
-  - `setup.ts`
-  - fixtures/helpers for RTL/Playwright
+Module structure and file organization
+--------------------------------------
+Keep the PWA implementation small and framework-native:
+
+- `vite.config.ts`
+  - Add `vite-plugin-pwa`'s `VitePWA` plugin after `react()`/`tailwindcss()`.
+  - Configure `registerType: 'autoUpdate'`.
+  - Define the Web App Manifest inline to keep the PWA metadata close to the build configuration.
+  - Configure Workbox/static asset patterns and SPA navigation fallback.
+
+- `index.html`
+  - Add mobile/PWA metadata in the document head:
+    `theme-color`, `mobile-web-app-capable`, Apple web app capability/title/status bar tags, and `apple-touch-icon`.
+  - Keep canonical app naming as exactly `Trip Planner` from the issue text.
+
+- `public/`
+  - Add generated icon assets:
+    - `pwa-192x192.png`
+    - `pwa-512x512.png`
+    - `pwa-512x512-maskable.png`
+  - Generate from existing `public/favicon.svg`; maskable icon should include safe-area padding.
+
+- `src/main.tsx`
+  - Register the service-worker update hook by importing `registerSW` from `virtual:pwa-register` and calling `registerSW({ immediate: true })` once during app startup.
+  - Keep rendering logic unchanged.
+
+- `src/vite-env.d.ts`
+  - Add `/// <reference types="vite-plugin-pwa/client" />` so TypeScript resolves `virtual:pwa-register`.
+  - If the file does not exist, create it with the existing Vite client reference plus the PWA client reference.
+
+- `README.md`
+  - Add a `PWA & Mobile Install` section after build/preview deployment notes.
+  - Document how to regenerate icons, how to run build/preview verification, and how to install from desktop Chrome and iOS Safari.
 
 Shared types
 ------------
-Keep all canonical types in `src/engine/types.ts` so data, engine, store, and UI import from one place.
+No application domain types are required for PWA support. The only type integration is the Vite/PWA virtual module declaration through `src/vite-env.d.ts`.
 
-- `Category`: string union for `food | museum | outdoors | nightlife | shopping`
-- `CityId`: `tokyo | paris | new-york`
-- `Attraction`: id, cityId, name, category, description?, timeHours, costUsd, energy, score, tags?
-- `ItineraryItem`: attractionId plus selected order if stable identity is needed
-- `Itinerary`: ordered `Attraction[]` or ids plus lookup; prefer ids in store and registry lookup for normalization
-- `ResourceTotals`: timeHours, costUsd, energy
-- `Modifier`: id, label, kind (`bonus | penalty`), delta, reason
-- `TripStyle`: union of the named outcomes from issue 13
-- `GamePhase`: `city-select | playing | finished`
-- `GameResult`: itinerary, totals, modifiers, score, tripStyle
-- constants: `MAX_TIME_HOURS = 12`, `MAX_BUDGET_USD = 150`, `MAX_ENERGY = 100`, warning threshold `0.8`
+Dependencies between issues
+---------------------------
+1. Issue #60: Install and configure `vite-plugin-pwa`
+   - Foundation for manifest generation, Workbox service worker output, and virtual module support.
+   - Should land before issues #62 and #63.
+
+2. Issue #61: Add PWA meta tags and Apple touch icon to `index.html`
+   - Depends on the agreed app metadata and icon path from #60/#62.
+   - Can be implemented after #60; final verification should wait for icons from #62.
+
+3. Issue #62: Generate and add PWA icon assets
+   - Depends on manifest icon paths in #60.
+   - Produces the files referenced by #60 manifest and #61 Apple touch icon.
+
+4. Issue #63: Register service-worker update hook in app entry
+   - Depends on #60 because `virtual:pwa-register` is provided by `vite-plugin-pwa`.
+   - Requires TypeScript client reference in `src/vite-env.d.ts`.
+
+5. Issue #64: Verify PWA via build/preview and document install flow
+   - Final integration issue.
+   - Depends on #61, #62, and #63.
+   - Should run `npm run build` and `npm run preview`, then document Manifest, Service Worker, Lighthouse, desktop Chrome install, and iOS Add to Home Screen checks.
 
 Key design decisions
 --------------------
-- Normalize city data around ids. Store selected attraction ids in Zustand, then derive full attraction objects from the selected city registry. This avoids duplicating attraction objects in state and keeps dataset changes localized.
-- Keep all rules pure. `resources.ts`, `modifiers.ts`, and `scoring.ts` should be framework-agnostic pure functions so they are easy to unit test and to reuse from components, selectors, and Playwright assertions.
-- Make modifiers declarative. Model combo/penalty rules as an array of rule functions or rule definitions returning optional `Modifier` objects instead of hardcoding score math inside the store.
-- Centralize derived state. The store should own mutable state and thin actions only; totals, active modifiers, final score, and trip style should be derived through shared selectors/pure functions to prevent drift between live HUD and finish screen.
-- Prepare for accessibility/mobile early. Component APIs should expose labels, disabled reasons, and reduced-motion-safe animations so issues 24 and 25 are additive passes rather than rewrites.
-- Treat theme metadata as data. City registry entries should carry display data like label, accent color, and optional illustration tokens so `CitySelect`, app shell background, and results can share one source of truth.
+- Use `vite-plugin-pwa` rather than a hand-written service worker so the existing Vite build pipeline emits a versioned, cache-aware service worker with minimal custom code.
+- Inline the manifest in `vite.config.ts` so app install metadata is reviewed with the PWA plugin setup; do not introduce a separate manifest file unless a later issue requests it.
+- Use `registerType: 'autoUpdate'` and `registerSW({ immediate: true })` to keep installed app instances fresh without building a custom update prompt UI in this batch.
+- Use `/index.html` as the navigation fallback because this is a client-side SPA served from static assets.
+- Include only build artifacts and static assets needed by the SPA in Workbox glob patterns; avoid caching development-only files.
+- Preserve the brand/name from the issue exactly: `Trip Planner`.
+- Treat PWA icons as generated repo assets committed under `public/`, not user uploads or runtime-managed storage.
+- Keep all changes static-host-compatible; no server, database, auth, email, or object storage integration is required for these issues.
 
-Issue dependency map
---------------------
-1. Foundation
-   - `#1` Vite/TS scaffold unlocks `#2`, `#3`, `#4`, `#5`, `#6`
-   - `#2` Tailwind/shadcn provides UI primitives for all visual work
-   - `#3` shared runtime deps/utilities support store, animation, icons, formatting
-   - `#4` lint/format/env should land before broad implementation
-   - `#5` test harness should exist before feature work accumulates
-2. Domain and content
-   - `#6` types/constants first
-   - `#7`, `#8`, `#9` datasets depend on `#6`
-   - `#10` city registry depends on all three datasets
-3. Game engine
-   - `#11` resource validation depends on `#6`
-   - `#12` modifier engine depends on `#6`
-   - `#13` scoring/classifier depends on `#11` and `#12`
-   - `#14` Zustand store depends on `#10`, `#11`, `#12`, `#13`
-4. UI flow
-   - `#15` app shell/phase router depends on `#14`
-   - `#16` city select depends on `#15` plus registry theme metadata
-   - `#17` HUD depends on store selectors/resource thresholds
-   - `#18` attraction card depends on `canAdd`, formatting, icons
-   - `#19` attraction grid depends on `#18`
-   - `#20` itinerary panel depends on store/remove/finish actions
-   - `#21` modifiers panel depends on live derived modifiers
-   - `#22` finish screen depends on final score/result derivations
-   - `#23` trip-style badge depends on classifier and finish screen
-5. Polish and verification
-   - `#24` mobile layout depends on completed board composition
-   - `#25` accessibility depends on most interactive UI existing
-   - `#26` component tests depend on HUD/card/panel stability
-   - `#27` happy-path E2E depends on end-to-end flow being complete
-   - `#28` edge-case E2E depends on validation and modifier behavior being complete
-   - `#29` deploy README depends on verified production build and env/docs
-
-Recommended implementation sequence
------------------------------------
-Follow the numerical order with one practical adjustment: finish `#6`, `#11`, `#12`, `#13`, and `#10` before `#14`, even if dataset authoring happens in parallel. That yields a stable engine/store contract before any major UI work.
-
-Risk areas to watch
--------------------
-- Dataset balance can invalidate combo/penalty and classifier expectations; keep dataset review explicit when issues `#7` to `#10` land.
-- If the store holds full attraction objects instead of ids, later refactors around filters/theme data become noisier.
-- Disabled-state UX is critical for tests and accessibility; standardize a single `reason` enum/string contract from `canAdd`.
-- Finish-screen score breakdown should reuse the same modifier data structure used live to avoid inconsistent totals.
+Verification checklist for final issue
+--------------------------------------
+- `npm install` includes `vite-plugin-pwa` in `package-lock.json`.
+- `npm run build` succeeds and emits manifest/service worker assets in `dist/`.
+- `npm run preview` serves the built app.
+- Browser DevTools Application tab shows a valid manifest with all three icons.
+- Service worker is registered and controls the page after reload.
+- Lighthouse PWA checks pass or any non-blocking limitations are documented.
+- README contains install steps for desktop Chrome and iOS Add to Home Screen.
